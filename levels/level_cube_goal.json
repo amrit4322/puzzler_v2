@@ -1,0 +1,89 @@
+{
+  "level_id": 2,
+  "title": "Level 2 - Cube Slides to Target",
+  "canvas": { "width": 900, "height": 620 },
+  "physics": {
+    "gravity": 450.0,
+    "damping": 0.985,
+    "iterations": 30,
+    "substeps": 4
+  },
+  "objects": [
+    {
+      "id": "cube",
+      "type": "box",
+      "dynamic": true,
+      "x": 160.0,
+      "y": 200.0,
+      "width": 45.0,
+      "height": 45.0,
+      "mass": 2.0,
+      "friction": 0.7,
+      "elasticity": 0.1,
+      "velocity": { "x": 0.0, "y": 0.0 },
+      "angular_velocity": 0.0,
+      "color": [70, 130, 220]
+    }
+  ],
+  "static_segments": [
+    {
+      "id": "main_ramp",
+      "a": { "x": 120.0, "y": 300.0 },
+      "b": { "x": 560.0, "y": 500.0 },
+      "thickness": 10.0,
+      "friction": 0.8,
+      "elasticity": 0.1
+    },
+    {
+      "id": "floor",
+      "a": { "x": 20.0, "y": 580.0 },
+      "b": { "x": 880.0, "y": 580.0 },
+      "thickness": 8.0,
+      "friction": 1.0,
+      "elasticity": 0.2
+    },
+    {
+      "id": "left_wall",
+      "a": { "x": 20.0, "y": 20.0 },
+      "b": { "x": 20.0, "y": 580.0 },
+      "thickness": 8.0,
+      "friction": 1.0,
+      "elasticity": 0.2
+    },
+    {
+      "id": "right_wall",
+      "a": { "x": 880.0, "y": 20.0 },
+      "b": { "x": 880.0, "y": 580.0 },
+      "thickness": 8.0,
+      "friction": 1.0,
+      "elasticity": 0.2
+    }
+  ],
+  "goal_logic": "all",
+  "goals": [
+    {
+      "id": "cube_target",
+      "type": "object_reaches_region",
+      "object_id": "cube",
+      "region": {
+        "shape": "rectangle",
+        "x": 610.0,
+        "y": 500.0,
+        "width": 140.0,
+        "height": 80.0
+      }
+    }
+  ],
+  "draw_rules": {
+    "max_segments": 4,
+    "segment_thickness": 6.0,
+    "friction": 1.0,
+    "elasticity": 0.1,
+    "draw_region": {
+      "x_min": 100.0,
+      "x_max": 760.0,
+      "y_min": 80.0,
+      "y_max": 540.0
+    }
+  }
+}

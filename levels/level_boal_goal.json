@@ -237,10 +237,10 @@
         "friction": 1.0,
         "elasticity": 0.1,
         "draw_region": {
-          "x_min": 100.0,
-          "x_max": 760.0,
-          "y_min": 80.0,
-          "y_max": 540.0
+          "x_min": 20.0,
+          "x_max": 880.0,
+          "y_min": 20.0,
+          "y_max": 580.0
         }
       }
     },
@@ -338,7 +338,7 @@
         "segment_thickness": 6.0,
         "friction": 1.0,
         "elasticity": 0.1,
-        "draw_region": {
+       "draw_region": {
           "x_min": 20.0,
           "x_max": 880.0,
           "y_min": 20.0,
