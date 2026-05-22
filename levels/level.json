@@ -160,20 +160,6 @@
       ],
       "static_segments": [
         {
-          "id": "main_ramp",
-          "a": {
-            "x": 120.0,
-            "y": 300.0
-          },
-          "b": {
-            "x": 560.0,
-            "y": 500.0
-          },
-          "thickness": 10.0,
-          "friction": 0.8,
-          "elasticity": 0.1
-        },
-        {
           "id": "floor",
           "a": {
             "x": 20.0,
@@ -240,13 +226,13 @@
           "x_min": 100.0,
           "x_max": 760.0,
           "y_min": 80.0,
-          "y_max": 540.0
+          "y_max": 580.0
         }
       }
     },
     {
       "level_id": 3,
-      "title": "Level 3 - Pendulum Balance",
+      "title": "Level 3 - Stop the ball in the green box",
       "canvas": {
         "width": 900,
         "height": 620
@@ -294,6 +280,48 @@
           "thickness": 8.0,
           "friction": 1.0,
           "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
         }
       ],
       "joints": [
@@ -320,8 +348,8 @@
           "duration_steps": 120,
           "region": {
             "shape": "rectangle",
-            "x": 710.0,
-            "y": 540.0,
+            "x": 700.0,
+            "y": 440.0,
             "width": 80.0,
             "height": 140.0
           }
@@ -344,6 +372,686 @@
           "y_min": 20.0,
           "y_max": 580.0
         }
+      }
+    },
+    {
+      "level_id": 4,
+      "title": "Level 4 - Don't let the ball touch the floor",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 650.0,
+          "y": 180.0,
+          "radius": 22.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.15,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            220,
+            70,
+            70
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "joints": [
+        {
+          "id": "ball_pivot_joint",
+          "type": "pin_joint_to_world",
+          "object_id": "ball",
+          "world_anchor": {
+            "x": 450.0,
+            "y": 140.0
+          },
+          "object_anchor": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "avoid_floor",
+          "type": "object_stays_above_y",
+          "object_id": "ball",
+          "min_y": 550.0,
+          "duration_steps": 180
+        },
+        {
+          "id": "slow_after_swing",
+          "type": "object_velocity_below",
+          "object_id": "ball",
+          "max_speed": 80.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 4,
+        "segment_thickness": 6.0,
+        "friction": 1.0,
+        "elasticity": 0.15,
+        "draw_region": {
+          "x_min": 20.0,
+          "x_max": 880.0,
+          "y_min": 20.0,
+          "y_max": 560.0
+        }
+      }
+    },
+    {
+      "level_id": 5,
+      "title": "Level 5 - Make the ball touch the ground",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "cube",
+          "type": "box",
+          "dynamic": false,
+          "x": 400.0,
+          "y": 420.0,
+          "width": 10.0,
+          "height": 320.0,
+          "mass": 2.0,
+          "friction": 10.0,
+          "elasticity": 0,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            20,
+            20,
+            20
+          ]
+        },
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 400.0,
+          "y": 220.0,
+          "radius": 25.0,
+          "mass": 2.0,
+          "friction": 1.0,
+          "elasticity": 0,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            70,
+            130,
+            220
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "ball_touch_ground",
+          "type": "object_below_height",
+          "object_id": "ball",
+          "y": 550.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 1,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.2,
+        "draw_region": {
+          "x_min": 40.0,
+          "x_max": 300.0,
+          "y_min": 80.0,
+          "y_max": 580.0
+        }
+      }
+    },
+    {
+      "level_id": 6,
+      "title": "Level 6 - Don't let the ball touch the ground",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 500.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 450.0,
+          "y": 220.0,
+          "radius": 24.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.15,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            120,
+            140,
+            140
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_slope",
+          "a": {
+            "x": 460.0,
+            "y": 250.0
+          },
+          "b": {
+            "x": 300.0,
+            "y": 400.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_slope",
+          "a": {
+            "x": 460.0,
+            "y": 250.0
+          },
+          "b": {
+            "x": 600.0,
+            "y": 400.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "keep_ball_alive",
+          "type": "object_stays_above_y",
+          "object_id": "ball",
+          "min_y": 540.0,
+          "duration_steps": 300
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.2,
+        "draw_region": {
+          "x_min": 220.0,
+          "x_max": 700.0,
+          "y_min": 160.0,
+          "y_max": 470.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 7,
+      "title": "Level 7 - Make the ball touch the right wall",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 360.0,
+          "y": 160.0,
+          "radius": 24.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.2,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            130,
+            150,
+            130
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 80.0,
+            "y": 560.0
+          },
+          "b": {
+            "x": 820.0,
+            "y": 560.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 80.0,
+            "y": 80.0
+          },
+          "b": {
+            "x": 80.0,
+            "y": 560.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 820.0,
+            "y": 80.0
+          },
+          "b": {
+            "x": 820.0,
+            "y": 560.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 80.0,
+            "y": 80.0
+          },
+          "b": {
+            "x": 820.0,
+            "y": 80.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "touch_right_wall",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "rectangle",
+            "x": 790.0,
+            "y": 80.0,
+            "width": 35.0,
+            "height": 480.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.25,
+        "draw_region": {
+          "x_min": 120.0,
+          "x_max": 790.0,
+          "y_min": 100.0,
+          "y_max": 260.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 8,
+      "title": "Level 8 - Make the ball touch the left wall",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 540.0,
+          "y": 160.0,
+          "radius": 24.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.2,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            130,
+            150,
+            130
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 80.0,
+            "y": 560.0
+          },
+          "b": {
+            "x": 820.0,
+            "y": 560.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 80.0,
+            "y": 80.0
+          },
+          "b": {
+            "x": 80.0,
+            "y": 560.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 820.0,
+            "y": 80.0
+          },
+          "b": {
+            "x": 820.0,
+            "y": 560.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 80.0,
+            "y": 80.0
+          },
+          "b": {
+            "x": 820.0,
+            "y": 80.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "touch_left_wall",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "rectangle",
+            "x": 75.0,
+            "y": 80.0,
+            "width": 35.0,
+            "height": 480.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.25,
+        "draw_region": {
+          "x_min": 120.0,
+          "x_max": 790.0,
+          "y_min": 100.0,
+          "y_max": 260.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
       }
     }
   ]

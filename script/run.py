@@ -84,6 +84,7 @@ def run_human_mode(env):
 
     running = True
     simulate = True
+    done = False
 
     print("Human mode started.")
     print("Drag mouse to draw.")
@@ -142,6 +143,8 @@ def run_human_mode(env):
 
             if terminated or truncated:
                 print("Episode ended:", info)
+
+                done = True
 
         env.render()
 

@@ -28,8 +28,10 @@ class BrainItOnGeneralEnv(gym.Env):
         control_mode: str = "agent",
         max_steps: int = 120,
         level_id: int = 1,
+        agent_draw_mode: str = "stroke",  
         stroke_body: str = "static",
-        simulation_started: bool = False
+        simulation_started: bool = False,
+        num_stroke_points: int = 3,
     ):
         super().__init__()
         self.simulation_started = simulation_started
@@ -39,8 +41,10 @@ class BrainItOnGeneralEnv(gym.Env):
         self.render_mode = render_mode
         self.reward_mode = reward_mode
         self.control_mode = control_mode
+        self.agent_draw_mode = agent_draw_mode
         self.max_steps = max_steps
         self.level_id = int(level_id)
+        self.num_stroke_points = num_stroke_points
         
         self.all_levels = self._load_levels_file(self.level_path)
         self.level_data = self._get_level_by_id(self.level_id)
@@ -247,9 +251,25 @@ class BrainItOnGeneralEnv(gym.Env):
     def step(self, action):
         if self.control_mode == "agent":
             if not self.simulation_started:
-                self._apply_draw_action(action)
-            elif len(self.agent_segments) < self.max_drawn_segments:
-                self._apply_draw_action(action)
+                if self.agent_draw_mode == "stroke":
+                    draw_success = self._apply_agent_stroke_action(action)
+                else:
+                    draw_success = self._apply_draw_action(action)
+
+                if not draw_success:
+                    obs = self._get_obs()
+                    info = {
+                        "is_success": False,
+                        "is_failure": True,
+                        "failure_reason": "invalid_draw",
+                        "step_count": self.step_count,
+                        "segments_used": len(self.agent_segments),
+                        "level_id": self.level_id,
+                        "level_title": self.level_data.get("title", "Untitled Level"),
+                    }
+                    return obs, -50.0, False, True, info
+            # elif len(self.agent_segments) < self.max_drawn_segments:
+            #     self._apply_agent_stroke_action(action)
 
         elif self.control_mode == "human":
             pass
@@ -284,13 +304,18 @@ class BrainItOnGeneralEnv(gym.Env):
         reward = self._compute_reward(self.prev_goal_distance, current_goal_distance)
         self.prev_goal_distance = current_goal_distance
 
+   
         terminated = self.goal_reached
-        truncated = self.step_count >= self.max_steps
+        truncated = (self.step_count >= self.max_steps) and not self.goal_reached
+
+        if truncated:
+            reward -= 50.0   # clear failure signal for timeout
 
         obs = self._get_obs()
 
         info = {
             "is_success": self.goal_reached,
+            "is_failure": truncated,
             "step_count": self.step_count,
             "segments_used": len(self.agent_segments),
             "goal_distance": current_goal_distance,
@@ -303,6 +328,39 @@ class BrainItOnGeneralEnv(gym.Env):
 
         return obs, reward, terminated, truncated, info
     
+    def _apply_agent_stroke_action(self, action):
+        if len(self.agent_segments) >= self.max_drawn_segments:
+            return False
+
+        action = np.asarray(action, dtype=np.float32).flatten()
+
+        if action.shape[0] != self.num_stroke_points * 2:
+            return False
+
+        points = []
+
+        for i in range(self.num_stroke_points):
+            x = self._clamp(action[2 * i], self.draw_region["x_min"], self.draw_region["x_max"])
+            y = self._clamp(action[2 * i + 1], self.draw_region["y_min"], self.draw_region["y_max"])
+            points.append((x, y))
+
+        total_length = 0.0
+        for i in range(len(points) - 1):
+            x1, y1 = points[i]
+            x2, y2 = points[i + 1]
+            total_length += math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+
+        if total_length < 25:
+            self.last_line_length = total_length
+            self.last_action = action
+            return False
+
+        self._apply_stroke_points(points)
+
+        if self.render_mode == "human":
+            print("PPO drew stroke:", points)
+
+        return True
     
     def _apply_stroke_points(self, points):
         if self.space is None:
@@ -449,6 +507,7 @@ class BrainItOnGeneralEnv(gym.Env):
         )
 
         self.simulation_started = True
+       
 
     def _apply_draw_action(self, action):
         if len(self.agent_segments) >= self.max_drawn_segments:
@@ -641,6 +700,65 @@ class BrainItOnGeneralEnv(gym.Env):
             self.font = pygame.font.SysFont("Arial", 18)
 
         self.screen.fill((245, 245, 248))
+
+
+        # ==========================================
+        # DRAW ACTION SPACE OVERLAY
+        # ==========================================
+
+        draw_region = self.draw_region
+
+        x_min = int(draw_region["x_min"])
+        x_max = int(draw_region["x_max"])
+        y_min = int(draw_region["y_min"]) + self.ui_height
+        y_max = int(draw_region["y_max"]) + self.ui_height
+
+        # Transparent overlay
+        overlay = pygame.Surface(
+            (self.window_width, self.window_height),
+            pygame.SRCALPHA
+        )
+
+        # Fill full gameplay area with light red
+        pygame.draw.rect(
+            overlay,
+            (255, 180, 180, 70),
+            pygame.Rect(
+                0,
+                self.ui_height,
+                self.window_width,
+                self.canvas_height
+            )
+        )
+
+        # Draw action space as white
+        pygame.draw.rect(
+            overlay,
+            (255, 255, 255, 140),
+            pygame.Rect(
+                x_min,
+                y_min,
+                x_max - x_min,
+                y_max - y_min
+            )
+        )
+
+        # Optional blue border
+        pygame.draw.rect(
+            overlay,
+            (50, 120, 255, 255),
+            pygame.Rect(
+                x_min,
+                y_min,
+                x_max - x_min,
+                y_max - y_min
+            ),
+            3
+        )
+
+        self.screen.blit(overlay, (0, 0))
+
+# ==========================================
 
         self._draw_goals()
         self._draw_static_segments()

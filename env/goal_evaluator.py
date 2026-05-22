@@ -43,6 +43,9 @@ class GoalEvaluator:
 
         if goal_type == "object_velocity_below":
             return self._object_velocity_below(goal)
+        
+        if goal_type == "object_stays_above_y":
+            return self._object_stays_above_y(goal)
 
         raise ValueError(f"Unsupported goal type: {goal_type}")
 
@@ -136,3 +139,23 @@ class GoalEvaluator:
         speed = body.velocity.length
 
         return speed <= max_speed
+    
+    def _object_stays_above_y(self, goal):
+        goal_id = goal["id"]
+        object_id = goal["object_id"]
+        min_y = float(goal["min_y"])
+        duration_steps = int(goal.get("duration_steps", 60))
+
+        body = self._get_object_body(object_id)
+
+        # In pygame-style coordinates:
+        # smaller y = higher on screen
+        # larger y = lower on screen
+        is_above_floor_limit = float(body.position.y) < min_y
+
+        if is_above_floor_limit:
+            self.goal_memory[goal_id] = self.goal_memory.get(goal_id, 0) + 1
+        else:
+            self.goal_memory[goal_id] = 0
+
+        return self.goal_memory[goal_id] >= duration_steps
