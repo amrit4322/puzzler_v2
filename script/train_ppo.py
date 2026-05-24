@@ -8,7 +8,8 @@ sys.path.append(str(ROOT))
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
-from stable_baselines3.common.callbacks import CheckpointCallback, EvalCallback
+from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.env_checker import check_env
 
 from env.brainiton_env_v2 import BrainItOnGeneralEnv
 
@@ -23,6 +24,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 def make_env(
     level_path,
     level_id=1,
+    train_level_ids=None,
     reward_mode="dense",
     stroke_body="static",
     max_steps=500,
@@ -33,6 +35,7 @@ def make_env(
         env = BrainItOnGeneralEnv(
             level_path=level_path,
             level_id=level_id,
+            train_level_ids=train_level_ids,
             render_mode=None,
             reward_mode=reward_mode,
             control_mode="agent",
@@ -48,52 +51,70 @@ def make_env(
 
 def train():
     level_path = "levels/level.json"
-    level_id = 1
+    train_level_ids = [1, 2, 5, 7, 8]
+    eval_level_ids = [3, 4, 6]
+    level_id = train_level_ids[0]
     reward_mode = "dense"
     stroke_body = "static"
-    max_steps = 100
-    model_name = f"ppo_level{level_id}_{reward_mode}_{stroke_body}"
+    max_steps = 500
+    model_name = f"ppo_multilevel_{reward_mode}_{stroke_body}"
 
     agent_draw_mode = "stroke"
     num_stroke_points = 2
+    n_envs = 4
+    total_timesteps = 300_000
+
+    check_env(
+        BrainItOnGeneralEnv(
+            level_path=level_path,
+            level_id=level_id,
+            train_level_ids=train_level_ids,
+            render_mode=None,
+            reward_mode=reward_mode,
+            control_mode="agent",
+            max_steps=max_steps,
+            stroke_body=stroke_body,
+            agent_draw_mode=agent_draw_mode,
+            num_stroke_points=num_stroke_points,
+        ),
+        warn=True,
+    )
+
     train_env = DummyVecEnv([
         make_env(
             level_path=level_path,
             level_id=level_id,
+            train_level_ids=train_level_ids,
             reward_mode=reward_mode,
             stroke_body=stroke_body,
             max_steps=max_steps,
             agent_draw_mode=agent_draw_mode,
-num_stroke_points=num_stroke_points,
+            num_stroke_points=num_stroke_points,
         )
+        for _ in range(n_envs)
     ])
     train_env = VecMonitor(train_env)
 
     eval_env = DummyVecEnv([
         make_env(
             level_path=level_path,
-            level_id=level_id,
+            level_id=eval_level_ids[0],
+            train_level_ids=eval_level_ids,
             reward_mode=reward_mode,
             stroke_body=stroke_body,
             max_steps=max_steps,
             agent_draw_mode=agent_draw_mode,
-num_stroke_points=num_stroke_points,
+            num_stroke_points=num_stroke_points,
         )
     ])
     eval_env = VecMonitor(eval_env)
-
-    checkpoint_callback = CheckpointCallback(
-        save_freq=10_000,
-        save_path=MODEL_DIR,
-        name_prefix=f"{model_name}_checkpoint",
-    )
 
     eval_callback = EvalCallback(
         eval_env,
         best_model_save_path=MODEL_DIR,
         log_path=LOG_DIR,
-        eval_freq=5_000,
-        n_eval_episodes=1,
+        eval_freq=max(10_000 // n_envs, 1),
+        n_eval_episodes=10,
         deterministic=True,
         render=False,
     )
@@ -102,7 +123,7 @@ num_stroke_points=num_stroke_points,
         policy="MlpPolicy",
         env=train_env,
         learning_rate=3e-4,
-        n_steps=1024,
+        n_steps=256,
         batch_size=64,
         n_epochs=10,
         gamma=0.99,
@@ -117,8 +138,8 @@ num_stroke_points=num_stroke_points,
     )
 
     model.learn(
-        total_timesteps=30_000,
-        callback=[checkpoint_callback],
+        total_timesteps=total_timesteps,
+        callback=eval_callback,
         progress_bar=True,
         tb_log_name=model_name,
     )

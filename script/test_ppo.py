@@ -15,12 +15,12 @@ def evaluate(render=True, episodes=5):
     level_id = 1
     reward_mode = "dense"
     stroke_body = "static"
-    max_steps = 100
+    max_steps = 500
     agent_draw_mode = "stroke"
     num_stroke_points = 2
     render_mode = "human"
 
-    model_path = f"models/ppo_level{level_id}_{reward_mode}_{stroke_body}_final"
+    model_path = f"models/ppo_multilevel_{reward_mode}_{stroke_body}_final"
 
     model = PPO.load(model_path)
 

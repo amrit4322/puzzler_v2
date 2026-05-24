@@ -19,6 +19,16 @@ class BrainItOnGeneralEnv(gym.Env):
     FPS = 60
     DT = 1.0 / FPS
     MAX_SPEED = 1200.0
+    OBS_SIZE = 32
+    GOAL_TYPES = [
+        "object_reaches_region",
+        "object_stays_in_region",
+        "object_angle_range",
+        "object_above_height",
+        "object_below_height",
+        "object_velocity_below",
+        "object_stays_above_y",
+    ]
 
     def __init__(
         self,
@@ -26,8 +36,9 @@ class BrainItOnGeneralEnv(gym.Env):
         render_mode: Optional[str] = None,
         reward_mode: str = "dense",
         control_mode: str = "agent",
-        max_steps: int = 120,
+        max_steps: int = 500,
         level_id: int = 1,
+        train_level_ids: Optional[list] = None,
         agent_draw_mode: str = "stroke",  
         stroke_body: str = "static",
         simulation_started: bool = False,
@@ -35,6 +46,7 @@ class BrainItOnGeneralEnv(gym.Env):
     ):
         super().__init__()
         self.simulation_started = simulation_started
+        self.default_stroke_body_type = stroke_body
         self.stroke_body_type = stroke_body
 
         self.level_path = Path(level_path)
@@ -44,6 +56,11 @@ class BrainItOnGeneralEnv(gym.Env):
         self.agent_draw_mode = agent_draw_mode
         self.max_steps = max_steps
         self.level_id = int(level_id)
+        self.train_level_ids = (
+            [int(level_id) for level_id in train_level_ids]
+            if train_level_ids is not None
+            else None
+        )
         self.num_stroke_points = num_stroke_points
         
         self.all_levels = self._load_levels_file(self.level_path)
@@ -56,18 +73,7 @@ class BrainItOnGeneralEnv(gym.Env):
         self.window_width = self.canvas_width
         self.window_height = self.canvas_height + self.ui_height
 
-        draw_rules = self.level_data.get("draw_rules", {})
-        self.max_drawn_segments = int(draw_rules.get("max_segments", 5))
-        self.agent_segment_thickness = float(draw_rules.get("segment_thickness", 6.0))
-        self.draw_region = draw_rules.get(
-            "draw_region",
-            {
-                "x_min": 100.0,
-                "x_max": 700.0,
-                "y_min": 80.0,
-                "y_max": 500.0,
-            },
-        )
+        self._apply_level_draw_rules()
 
         self.space = None
         self.objects: Dict[str, Dict[str, Any]] = {}
@@ -78,6 +84,7 @@ class BrainItOnGeneralEnv(gym.Env):
         self.goal_reached = False
         self.step_count = 0
         self.prev_goal_distance = 0.0
+        self.prev_goal_score = 0.0
 
         self.screen = None
         self.clock = None
@@ -89,33 +96,11 @@ class BrainItOnGeneralEnv(gym.Env):
         self.last_action = None
         self.last_line_length = 0.0
 
-        self.action_space = spaces.Box(
-            low=np.array(
-                [
-                    self.draw_region["x_min"],
-                    self.draw_region["y_min"],
-                    self.draw_region["x_min"],
-                    self.draw_region["y_min"],
-                ],
-                dtype=np.float32,
-            ),
-            high=np.array(
-                [
-                    self.draw_region["x_max"],
-                    self.draw_region["y_max"],
-                    self.draw_region["x_max"],
-                    self.draw_region["y_max"],
-                ],
-                dtype=np.float32,
-            ),
-            dtype=np.float32,
-        )
+        self.action_space = self._make_action_space()
 
-        # Generic observation for now:
-        # first dynamic object position/velocity + goal center if available
         self.observation_space = spaces.Box(
-            low=np.array([-1.0] * 10, dtype=np.float32),
-            high=np.array([1.0] * 10, dtype=np.float32),
+            low=-np.ones(self.OBS_SIZE, dtype=np.float32),
+            high=np.ones(self.OBS_SIZE, dtype=np.float32),
             dtype=np.float32,
         )
 
@@ -148,16 +133,55 @@ class BrainItOnGeneralEnv(gym.Env):
     
     def get_available_level_ids(self):
         return sorted([int(level["level_id"]) for level in self.all_levels["levels"]])
-    
-    def load_level_by_id(self, level_id: int):
-        self.level_id = int(level_id)
-        self.level_data = self._get_level_by_id(self.level_id)
 
+    def _make_action_space(self):
+        if self.agent_draw_mode == "stroke":
+            action_dim = self.num_stroke_points * 2
+        else:
+            action_dim = 4
+
+        return spaces.Box(
+            low=-np.ones(action_dim, dtype=np.float32),
+            high=np.ones(action_dim, dtype=np.float32),
+            dtype=np.float32,
+        )
+
+    def _action_to_draw_coordinates(self, action):
+        action = np.asarray(action, dtype=np.float32).flatten()
+
+        # PPO works best with normalized continuous actions. Pixel coordinates
+        # are still accepted so scripted/LLM callers can pass direct draw points.
+        if np.all(action >= -1.05) and np.all(action <= 1.05):
+            scaled = action.copy()
+            x_min = self.draw_region["x_min"]
+            x_max = self.draw_region["x_max"]
+            y_min = self.draw_region["y_min"]
+            y_max = self.draw_region["y_max"]
+
+            scaled[0::2] = x_min + ((scaled[0::2] + 1.0) * 0.5) * (x_max - x_min)
+            scaled[1::2] = y_min + ((scaled[1::2] + 1.0) * 0.5) * (y_max - y_min)
+            return scaled
+
+        return action
+
+    def _apply_level_settings(self):
         canvas = self.level_data.get("canvas", {})
         self.canvas_width = int(canvas.get("width", 900))
         self.canvas_height = int(canvas.get("height", 620))
+        self.window_width = self.canvas_width
+        self.window_height = self.canvas_height + self.ui_height
+        self._apply_level_draw_rules()
 
+    def _apply_level_draw_rules(self):
         draw_rules = self.level_data.get("draw_rules", {})
+        self.stroke_body_type = draw_rules.get("stroke_body", self.default_stroke_body_type)
+
+        if self.stroke_body_type not in ("static", "dynamic"):
+            raise ValueError(
+                f"Invalid stroke_body '{self.stroke_body_type}'. "
+                "Use 'static' or 'dynamic'."
+            )
+
         self.max_drawn_segments = int(draw_rules.get("max_segments", 5))
         self.agent_segment_thickness = float(draw_rules.get("segment_thickness", 6.0))
         self.draw_region = draw_rules.get(
@@ -169,6 +193,13 @@ class BrainItOnGeneralEnv(gym.Env):
                 "y_max": 500.0,
             },
         )
+        self.action_space = self._make_action_space()
+    
+    def load_level_by_id(self, level_id: int):
+        self.level_id = int(level_id)
+        self.level_data = self._get_level_by_id(self.level_id)
+
+        self._apply_level_settings()
 
         self.reset()
 
@@ -219,6 +250,22 @@ class BrainItOnGeneralEnv(gym.Env):
         self.goal_evaluator = GoalEvaluator(self.level_data, self.objects)
         self.goal_evaluator.reset()
 
+    def _reset_attempt_state(self):
+        self.step_count = 0
+        self.goal_reached = False
+        self.last_action = None
+        self.last_line_length = 0.0
+        self.current_stroke_points = []
+        self.preview_stroke_points = []
+        self.simulation_started = False
+
+        if self.goal_evaluator is not None:
+            self.goal_evaluator.reset()
+
+        if self.space is not None:
+            self.prev_goal_distance = self._distance_to_first_goal()
+            self.prev_goal_score = self._goal_progress_score()
+
     def reset(
         self,
         *,
@@ -227,34 +274,48 @@ class BrainItOnGeneralEnv(gym.Env):
     ) -> Tuple[np.ndarray, Dict[str, Any]]:
         super().reset(seed=seed)
 
-        self.step_count = 0
-        self.goal_reached = False
-        self.last_action = None
-        self.last_line_length = 0.0
+        requested_level_id = None
+        if options is not None and "level_id" in options:
+            requested_level_id = int(options["level_id"])
+        elif self.train_level_ids:
+            requested_level_id = int(self.np_random.choice(self.train_level_ids))
+
+        if requested_level_id is not None and requested_level_id != self.level_id:
+            self.level_id = requested_level_id
+            self.level_data = self._get_level_by_id(self.level_id)
+
+        self._apply_level_settings()
 
         self._setup_world()
-
-        self.prev_goal_distance = self._distance_to_first_goal()
+        self._reset_attempt_state()
 
         obs = self._get_obs()
         info = {
+            "level_id": self.level_id,
             "level_title": self.level_data.get("title", "Untitled Level"),
             "is_success": False,
         }
 
         if self.render_mode == "human":
             self.render()
-        self.simulation_started = False
 
         return obs, info
 
     def step(self, action):
+        if self.space is None:
+            raise RuntimeError("Physics space is not initialized. Call reset() before step().")
+
+        substeps = int(self.level_data.get("physics", {}).get("substeps", 4))
+
         if self.control_mode == "agent":
             if not self.simulation_started:
+                segment_count_before = len(self.agent_segments)
+
                 if self.agent_draw_mode == "stroke":
                     draw_success = self._apply_agent_stroke_action(action)
                 else:
                     draw_success = self._apply_draw_action(action)
+                    draw_success = draw_success and len(self.agent_segments) > segment_count_before
 
                 if not draw_success:
                     obs = self._get_obs()
@@ -264,17 +325,59 @@ class BrainItOnGeneralEnv(gym.Env):
                         "failure_reason": "invalid_draw",
                         "step_count": self.step_count,
                         "segments_used": len(self.agent_segments),
+                        "goal_distance": self.prev_goal_distance,
                         "level_id": self.level_id,
                         "level_title": self.level_data.get("title", "Untitled Level"),
                     }
-                    return obs, -50.0, False, True, info
-            # elif len(self.agent_segments) < self.max_drawn_segments:
-            #     self._apply_agent_stroke_action(action)
+                    return obs, -100.0, False, True, info
 
-        elif self.control_mode == "human":
-            pass
+            episode_reward = 0.0
 
-        if not self.simulation_started:
+            while self.step_count < self.max_steps and not self.goal_reached:
+                self.step_count += 1
+
+                for _ in range(substeps):
+                    self.space.step(self.DT)
+
+                    if self.goal_evaluator.check_success():
+                        self.goal_reached = True
+                        break
+
+                current_goal_distance = self._distance_to_first_goal()
+                current_goal_score = self._goal_progress_score()
+                episode_reward += self._compute_reward(
+                    self.prev_goal_score,
+                    current_goal_score,
+                )
+                self.prev_goal_distance = current_goal_distance
+                self.prev_goal_score = current_goal_score
+
+                if self.render_mode == "human":
+                    self.render()
+
+            terminated = self.goal_reached
+            truncated = (self.step_count >= self.max_steps) and not self.goal_reached
+
+            if truncated:
+                episode_reward -= 50.0
+
+            obs = self._get_obs()
+            info = {
+                "is_success": self.goal_reached,
+                "is_failure": truncated,
+                "failure_reason": "timeout" if truncated else None,
+                "step_count": self.step_count,
+                "segments_used": len(self.agent_segments),
+                "goal_distance": self.prev_goal_distance,
+                "level_id": self.level_id,
+                "level_title": self.level_data.get("title", "Untitled Level"),
+            }
+
+            return obs, float(episode_reward), terminated, truncated, info
+
+        if self.control_mode == "human" and not self.simulation_started:
+            # In human mode, the level waits after reset so the player can draw.
+            # Once a stroke is drawn, _apply_stroke_points() starts simulation.
             obs = self._get_obs()
             info = {
                 "is_success": self.goal_reached,
@@ -288,11 +391,6 @@ class BrainItOnGeneralEnv(gym.Env):
 
         self.step_count += 1
 
-        substeps = int(self.level_data.get("physics", {}).get("substeps", 4))
-
-        if self.space is None:
-            raise RuntimeError("Physics space is not initialized. Call reset() before step().")
-
         for _ in range(substeps):
             self.space.step(self.DT)
 
@@ -301,21 +399,23 @@ class BrainItOnGeneralEnv(gym.Env):
                 break
 
         current_goal_distance = self._distance_to_first_goal()
-        reward = self._compute_reward(self.prev_goal_distance, current_goal_distance)
+        current_goal_score = self._goal_progress_score()
+        reward = self._compute_reward(self.prev_goal_score, current_goal_score)
         self.prev_goal_distance = current_goal_distance
+        self.prev_goal_score = current_goal_score
 
-   
         terminated = self.goal_reached
         truncated = (self.step_count >= self.max_steps) and not self.goal_reached
 
         if truncated:
-            reward -= 50.0   # clear failure signal for timeout
+            reward -= 50.0
 
         obs = self._get_obs()
 
         info = {
             "is_success": self.goal_reached,
             "is_failure": truncated,
+            "failure_reason": "timeout" if truncated else None,
             "step_count": self.step_count,
             "segments_used": len(self.agent_segments),
             "goal_distance": current_goal_distance,
@@ -332,7 +432,7 @@ class BrainItOnGeneralEnv(gym.Env):
         if len(self.agent_segments) >= self.max_drawn_segments:
             return False
 
-        action = np.asarray(action, dtype=np.float32).flatten()
+        action = self._action_to_draw_coordinates(action)
 
         if action.shape[0] != self.num_stroke_points * 2:
             return False
@@ -355,7 +455,8 @@ class BrainItOnGeneralEnv(gym.Env):
             self.last_action = action
             return False
 
-        self._apply_stroke_points(points)
+        if not self._apply_stroke_points(points):
+            return False
 
         if self.render_mode == "human":
             print("PPO drew stroke:", points)
@@ -364,13 +465,13 @@ class BrainItOnGeneralEnv(gym.Env):
     
     def _apply_stroke_points(self, points):
         if self.space is None:
-            return
+            return False
 
         if len(self.agent_segments) >= self.max_drawn_segments:
-            return
+            return False
 
         if len(points) < 2:
-            return
+            return False
 
         draw_rules = self.level_data.get("draw_rules", {})
         friction = float(draw_rules.get("friction", 0.9))
@@ -395,7 +496,7 @@ class BrainItOnGeneralEnv(gym.Env):
                     cleaned_points.append((x, y))
 
         if len(cleaned_points) < 2:
-            return
+            return False
 
         stroke_shapes = []
         stroke_bodies = []
@@ -507,15 +608,16 @@ class BrainItOnGeneralEnv(gym.Env):
         )
 
         self.simulation_started = True
+        return True
        
 
     def _apply_draw_action(self, action):
         if len(self.agent_segments) >= self.max_drawn_segments:
-            return
+            return False
 
-        action = np.asarray(action, dtype=np.float32).flatten()
+        action = self._action_to_draw_coordinates(action)
         if action.shape[0] != 4:
-            return
+            return False
 
         x1, y1, x2, y2 = action.tolist()
 
@@ -593,35 +695,103 @@ class BrainItOnGeneralEnv(gym.Env):
         # Start simulation after first valid stroke
         if not self.simulation_started:
             self.simulation_started = True
-        print(f"PPO drew line: ({x1:.1f}, {y1:.1f}) -> ({x2:.1f}, {y2:.1f})")
+        if self.render_mode == "human":
+            print(f"PPO drew line: ({x1:.1f}, {y1:.1f}) -> ({x2:.1f}, {y2:.1f})")
+        return True
 
-    def _compute_reward(self, prev_dist, current_dist):
+    def _compute_reward(self, prev_score, current_score):
         if self.reward_mode == "sparse":
-            return 1.0 if self.goal_reached else -1.0
+            return 100.0 if self.goal_reached else 0.0
 
         reward = -0.02
 
-        progress = prev_dist - current_dist
-        reward += 0.05 * progress
+        progress = current_score - prev_score
+        reward += 10.0 * progress
 
         reward -= 0.03 * len(self.agent_segments)
 
         if self.last_action is not None and self.last_line_length < 25:
             reward -= 1.0
 
-        if current_dist < 200:
-            reward += 1.0
-
-        if current_dist < 100:
-            reward += 2.0
-
-        if current_dist < 50:
-            reward += 5.0
+        reward += 0.05 * current_score
 
         if self.goal_reached:
             reward += 100.0
 
         return float(reward)
+
+    def _goal_progress_score(self):
+        goals = self.level_data.get("goals", [])
+        if not goals:
+            return 0.0
+
+        scores = [self._single_goal_score(goal) for goal in goals]
+
+        if self.level_data.get("goal_logic", "all") == "any":
+            return float(max(scores))
+
+        return float(sum(scores) / len(scores))
+
+    def _single_goal_score(self, goal):
+        object_id = goal.get("object_id")
+        if object_id not in self.objects:
+            return 0.0
+
+        obj = self.objects[object_id]
+        body = obj["body"]
+        goal_type = goal["type"]
+        diag = math.sqrt(self.canvas_width ** 2 + self.canvas_height ** 2)
+
+        if goal_type in ("object_reaches_region", "object_stays_in_region"):
+            dist = self._distance_to_goal_region(goal, body.position.x, body.position.y)
+            return np.clip(1.0 - (dist / max(1.0, diag)), -1.0, 1.0)
+
+        if goal_type == "object_below_height":
+            target_y = float(goal["y"])
+            return np.clip((body.position.y - target_y) / self.canvas_height, -1.0, 1.0)
+
+        if goal_type == "object_above_height":
+            target_y = float(goal["y"])
+            return np.clip((target_y - body.position.y) / self.canvas_height, -1.0, 1.0)
+
+        if goal_type == "object_stays_above_y":
+            min_y = float(goal["min_y"])
+            return np.clip((min_y - body.position.y) / self.canvas_height, -1.0, 1.0)
+
+        if goal_type == "object_velocity_below":
+            max_speed = float(goal.get("max_speed", 10.0))
+            speed = float(body.velocity.length)
+            return np.clip((max_speed - speed) / self.MAX_SPEED, -1.0, 1.0)
+
+        if goal_type == "object_angle_range":
+            min_angle = float(goal["min_angle"])
+            max_angle = float(goal["max_angle"])
+            center = (min_angle + max_angle) / 2.0
+            half_width = max((max_angle - min_angle) / 2.0, 1e-6)
+            angle_error = abs(float(body.angle) - center)
+            return np.clip(1.0 - (angle_error / half_width), -1.0, 1.0)
+
+        return 0.0
+
+    def _distance_to_goal_region(self, goal, x, y):
+        region = goal.get("region", {})
+
+        if region.get("shape") == "circle":
+            cx = float(region.get("x", 0.0))
+            cy = float(region.get("y", 0.0))
+            r = float(region.get("r", 0.0))
+            return max(0.0, math.sqrt((x - cx) ** 2 + (y - cy) ** 2) - r)
+
+        if region.get("shape") == "rectangle":
+            rx = float(region.get("x", 0.0))
+            ry = float(region.get("y", 0.0))
+            w = float(region.get("width", 0.0))
+            h = float(region.get("height", 0.0))
+            dx = max(rx - x, 0.0, x - (rx + w))
+            dy = max(ry - y, 0.0, y - (ry + h))
+            return math.sqrt(dx ** 2 + dy ** 2)
+
+        return 0.0
     def _get_obs(self):
         dynamic_objects = [
             obj for obj in self.objects.values()
@@ -629,7 +799,7 @@ class BrainItOnGeneralEnv(gym.Env):
         ]
 
         if not dynamic_objects:
-            return np.zeros(10, dtype=np.float32)
+            return np.zeros(self.OBS_SIZE, dtype=np.float32)
 
         obj = dynamic_objects[0]
         body = obj["body"]
@@ -650,10 +820,99 @@ class BrainItOnGeneralEnv(gym.Env):
         step_norm = min(1.0, self.step_count / max(1, self.max_steps))
         seg_norm = min(1.0, len(self.agent_segments) / max(1, self.max_drawn_segments))
 
-        return np.array(
-            [x, y, vx, vy, gx_norm, gy_norm, rel_x, rel_y, step_norm, seg_norm],
+        draw_x_min = self.draw_region["x_min"] / self.canvas_width
+        draw_x_max = self.draw_region["x_max"] / self.canvas_width
+        draw_y_min = self.draw_region["y_min"] / self.canvas_height
+        draw_y_max = self.draw_region["y_max"] / self.canvas_height
+
+        obj_width = float(obj["config"].get("width", obj["config"].get("radius", 0.0) * 2.0))
+        obj_height = float(obj["config"].get("height", obj["config"].get("radius", 0.0) * 2.0))
+        obj_w_norm = np.clip(obj_width / self.canvas_width, 0.0, 1.0)
+        obj_h_norm = np.clip(obj_height / self.canvas_height, 0.0, 1.0)
+
+        gravity_norm = np.clip(float(self.space.gravity.y) / 1000.0, -1.0, 1.0)
+
+        goal_features = self._goal_obs_features()
+        static_features = self._static_segment_obs_features()
+
+        obs = np.array(
+            [
+                x,
+                y,
+                vx,
+                vy,
+                gx_norm,
+                gy_norm,
+                rel_x,
+                rel_y,
+                step_norm,
+                seg_norm,
+                draw_x_min,
+                draw_x_max,
+                draw_y_min,
+                draw_y_max,
+                obj_w_norm,
+                obj_h_norm,
+                gravity_norm,
+                *goal_features,
+                *static_features,
+            ],
             dtype=np.float32,
         )
+
+        return np.clip(obs, -1.0, 1.0)
+
+    def _goal_obs_features(self):
+        features = []
+        goals = self.level_data.get("goals", [])
+        goal = goals[0] if goals else {}
+        goal_type = goal.get("type", "")
+
+        for known_type in self.GOAL_TYPES:
+            features.append(1.0 if goal_type == known_type else 0.0)
+
+        region = goal.get("region", {})
+        goal_param_1 = 0.0
+        goal_param_2 = 0.0
+        goal_param_3 = 0.0
+        goal_param_4 = 0.0
+
+        if region.get("shape") == "circle":
+            goal_param_1 = float(region.get("r", 0.0)) / self.canvas_width
+        elif region.get("shape") == "rectangle":
+            goal_param_1 = float(region.get("width", 0.0)) / self.canvas_width
+            goal_param_2 = float(region.get("height", 0.0)) / self.canvas_height
+        elif goal_type in ("object_above_height", "object_below_height"):
+            goal_param_1 = float(goal.get("y", 0.0)) / self.canvas_height
+        elif goal_type == "object_stays_above_y":
+            goal_param_1 = float(goal.get("min_y", 0.0)) / self.canvas_height
+            goal_param_2 = float(goal.get("duration_steps", 0.0)) / max(1.0, self.max_steps)
+        elif goal_type == "object_velocity_below":
+            goal_param_1 = float(goal.get("max_speed", 0.0)) / self.MAX_SPEED
+        elif goal_type == "object_angle_range":
+            goal_param_1 = float(goal.get("min_angle", 0.0)) / math.pi
+            goal_param_2 = float(goal.get("max_angle", 0.0)) / math.pi
+
+        goal_param_3 = np.clip(self._goal_progress_score(), -1.0, 1.0)
+        goal_param_4 = 1.0 if self.level_data.get("goal_logic", "all") == "any" else 0.0
+
+        features.extend([goal_param_1, goal_param_2, goal_param_3, goal_param_4])
+        return features
+
+    def _static_segment_obs_features(self):
+        if not self.level_data.get("static_segments"):
+            return [0.0, 0.0, 0.0, 0.0]
+
+        seg = self.level_data["static_segments"][0]
+        a = seg.get("a", {})
+        b = seg.get("b", {})
+
+        return [
+            float(a.get("x", 0.0)) / self.canvas_width,
+            float(a.get("y", 0.0)) / self.canvas_height,
+            float(b.get("x", 0.0)) / self.canvas_width,
+            float(b.get("y", 0.0)) / self.canvas_height,
+        ]
 
     def _first_goal_center(self):
         goals = self.level_data.get("goals", [])
@@ -1022,9 +1281,7 @@ class BrainItOnGeneralEnv(gym.Env):
                     self.space.remove(body)
 
         self.agent_segments.clear()
-        self.current_stroke_points = []
-        self.preview_stroke_points = []
-        self.simulation_started = False
+        self._reset_attempt_state()
         
     def close(self):
         if self.screen is not None:

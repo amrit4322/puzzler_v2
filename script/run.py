@@ -60,13 +60,13 @@ def parse_args():
         help="Reward mode",
     )
 
-    parser.add_argument(
-    "--stroke_body",
-    type=str,
-    default="static",
-    choices=["static", "dynamic"],
-    help="Whether drawn strokes are fixed or affected by gravity",
-)
+#     parser.add_argument(
+#     "--stroke_body",
+#     type=str,
+#     default="static",
+#     choices=["static", "dynamic"],
+#     help="Whether drawn strokes are fixed or affected by gravity",
+# )
 
     parser.add_argument(
         "--max_steps",
@@ -136,7 +136,7 @@ def run_human_mode(env):
                     env.current_stroke_points = []
                     env.preview_stroke_points = []
 
-        if simulate and not env.goal_reached:
+        if simulate  and not done  and not env.goal_reached:
             obs, reward, terminated, truncated, info = env.step(
                 np.zeros(4, dtype=np.float32)
             )
@@ -199,7 +199,7 @@ def main():
             reward_mode=args.reward,
             control_mode=args.mode,
             max_steps=args.max_steps,
-            stroke_body=args.stroke_body,
+            
         )
     else:
         raise ValueError(f"Unsupported env: {args.env}")

@@ -2,7 +2,7 @@
   "levels": [
     {
       "level_id": 1,
-      "title": "Level 1 - Make the red ball touch the green ball",
+      "title": "Make the red ball touch the green ball",
       "canvas": {
         "width": 900,
         "height": 620
@@ -113,6 +113,7 @@
         "segment_thickness": 6.0,
         "friction": 1.0,
         "elasticity": 0.2,
+        "stroke_body": "dynamic",
         "draw_region": {
           "x_min": 20.0,
           "x_max": 880.0,
@@ -123,7 +124,7 @@
     },
     {
       "level_id": 2,
-      "title": "Level 2 - Cube Slides to Target",
+      "title": "Cube Slides to Target",
       "canvas": {
         "width": 900,
         "height": 620
@@ -222,6 +223,7 @@
         "segment_thickness": 6.0,
         "friction": 1.0,
         "elasticity": 0.1,
+        "stroke_body": "static",
         "draw_region": {
           "x_min": 100.0,
           "x_max": 760.0,
@@ -232,7 +234,7 @@
     },
     {
       "level_id": 3,
-      "title": "Level 3 - Stop the ball in the green box",
+      "title": "Stop the ball in the green box",
       "canvas": {
         "width": 900,
         "height": 620
@@ -366,6 +368,7 @@
         "segment_thickness": 6.0,
         "friction": 1.0,
         "elasticity": 0.1,
+        "stroke_body": "static",
         "draw_region": {
           "x_min": 20.0,
           "x_max": 880.0,
@@ -376,7 +379,7 @@
     },
     {
       "level_id": 4,
-      "title": "Level 4 - Don't let the ball touch the floor",
+      "title": "Don't let the ball touch the floor",
       "canvas": {
         "width": 900,
         "height": 620
@@ -504,6 +507,7 @@
         "segment_thickness": 6.0,
         "friction": 1.0,
         "elasticity": 0.15,
+        "stroke_body": "dynamic",
         "draw_region": {
           "x_min": 20.0,
           "x_max": 880.0,
@@ -514,7 +518,7 @@
     },
     {
       "level_id": 5,
-      "title": "Level 5 - Make the ball touch the ground",
+      "title": "Make the ball touch the ground",
       "canvas": {
         "width": 900,
         "height": 620
@@ -642,6 +646,7 @@
         "segment_thickness": 8.0,
         "friction": 1.0,
         "elasticity": 0.2,
+        "stroke_body": "dynamic",
         "draw_region": {
           "x_min": 40.0,
           "x_max": 300.0,
@@ -652,7 +657,7 @@
     },
     {
       "level_id": 6,
-      "title": "Level 6 - Don't let the ball touch the ground",
+      "title": "Don't let the ball touch the ground",
       "canvas": {
         "width": 900,
         "height": 620
@@ -787,6 +792,7 @@
         "segment_thickness": 8.0,
         "friction": 1.0,
         "elasticity": 0.2,
+        "stroke_body": "dynamic",
         "draw_region": {
           "x_min": 220.0,
           "x_max": 700.0,
@@ -802,7 +808,7 @@
     },
     {
       "level_id": 7,
-      "title": "Level 7 - Make the ball touch the right wall",
+      "title": "Make the ball touch the right wall",
       "canvas": {
         "width": 900,
         "height": 620
@@ -840,12 +846,12 @@
         {
           "id": "floor",
           "a": {
-            "x": 80.0,
-            "y": 560.0
+            "x": 20.0,
+            "y": 580.0
           },
           "b": {
-            "x": 820.0,
-            "y": 560.0
+            "x": 880.0,
+            "y": 580.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -854,12 +860,12 @@
         {
           "id": "left_wall",
           "a": {
-            "x": 80.0,
-            "y": 80.0
+            "x": 20.0,
+            "y": 20.0
           },
           "b": {
-            "x": 80.0,
-            "y": 560.0
+            "x": 20.0,
+            "y": 580.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -868,12 +874,12 @@
         {
           "id": "right_wall",
           "a": {
-            "x": 820.0,
-            "y": 80.0
+            "x": 880.0,
+            "y": 20.0
           },
           "b": {
-            "x": 820.0,
-            "y": 560.0
+            "x": 880.0,
+            "y": 580.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -882,12 +888,12 @@
         {
           "id": "ceiling",
           "a": {
-            "x": 80.0,
-            "y": 80.0
+            "x": 20.0,
+            "y": 20.0
           },
           "b": {
-            "x": 820.0,
-            "y": 80.0
+            "x": 880.0,
+            "y": 20.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -902,10 +908,10 @@
           "object_id": "ball",
           "region": {
             "shape": "rectangle",
-            "x": 790.0,
-            "y": 80.0,
-            "width": 35.0,
-            "height": 480.0
+            "x": 850.0,
+            "y": 20.0,
+            "width": 30.0,
+            "height": 560.0
           }
         }
       ],
@@ -914,6 +920,7 @@
         "segment_thickness": 8.0,
         "friction": 1.0,
         "elasticity": 0.25,
+        "stroke_body": "dynamic",
         "draw_region": {
           "x_min": 120.0,
           "x_max": 790.0,
@@ -929,7 +936,7 @@
     },
     {
       "level_id": 8,
-      "title": "Level 8 - Make the ball touch the left wall",
+      "title": "Make the ball touch the left wall",
       "canvas": {
         "width": 900,
         "height": 620
@@ -967,12 +974,12 @@
         {
           "id": "floor",
           "a": {
-            "x": 80.0,
-            "y": 560.0
+            "x": 20.0,
+            "y": 580.0
           },
           "b": {
-            "x": 820.0,
-            "y": 560.0
+            "x": 880.0,
+            "y": 580.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -981,12 +988,12 @@
         {
           "id": "left_wall",
           "a": {
-            "x": 80.0,
-            "y": 80.0
+            "x": 20.0,
+            "y": 20.0
           },
           "b": {
-            "x": 80.0,
-            "y": 560.0
+            "x": 20.0,
+            "y": 580.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -995,12 +1002,12 @@
         {
           "id": "right_wall",
           "a": {
-            "x": 820.0,
-            "y": 80.0
+            "x": 880.0,
+            "y": 20.0
           },
           "b": {
-            "x": 820.0,
-            "y": 560.0
+            "x": 880.0,
+            "y": 580.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -1009,12 +1016,12 @@
         {
           "id": "ceiling",
           "a": {
-            "x": 80.0,
-            "y": 80.0
+            "x": 20.0,
+            "y": 20.0
           },
           "b": {
-            "x": 820.0,
-            "y": 80.0
+            "x": 880.0,
+            "y": 20.0
           },
           "thickness": 8.0,
           "friction": 1.0,
@@ -1029,10 +1036,10 @@
           "object_id": "ball",
           "region": {
             "shape": "rectangle",
-            "x": 75.0,
-            "y": 80.0,
-            "width": 35.0,
-            "height": 480.0
+            "x": 20.0,
+            "y": 20.0,
+            "width": 30.0,
+            "height": 560.0
           }
         }
       ],
@@ -1041,11 +1048,1877 @@
         "segment_thickness": 8.0,
         "friction": 1.0,
         "elasticity": 0.25,
+        "stroke_body": "dynamic",
         "draw_region": {
           "x_min": 120.0,
           "x_max": 790.0,
           "y_min": 100.0,
           "y_max": 260.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 9,
+      "title": "Roll the ball into the low pocket",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.985,
+        "iterations": 30,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 150.0,
+          "y": 160.0,
+          "radius": 22.0,
+          "mass": 1.5,
+          "friction": 0.9,
+          "elasticity": 0.15,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            220,
+            90,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "pocket_left",
+          "a": {
+            "x": 710.0,
+            "y": 400.0
+          },
+          "b": {
+            "x": 710.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "reach_pocket",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "circle",
+            "x": 760.0,
+            "y": 535.0,
+            "r": 30.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.15,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 70.0,
+          "x_max": 760.0,
+          "y_min": 100.0,
+          "y_max": 560.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 10,
+      "title": "Drop the cube into the third bay",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.985,
+        "iterations": 30,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "cube",
+          "type": "box",
+          "dynamic": true,
+          "x": 500.0,
+          "y": 50.0,
+          "width": 46.0,
+          "height": 46.0,
+          "mass": 2.0,
+          "friction": 0.7,
+          "elasticity": 0.1,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            80,
+            130,
+            220
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.15
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "subline1",
+          "a": {
+            "x": 150.0,
+            "y": 450.0
+          },
+          "b": {
+            "x": 150.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        },
+        {
+          "id": "subline1",
+          "a": {
+            "x": 250.0,
+            "y": 450.0
+          },
+          "b": {
+            "x": 250.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        },
+        {
+          "id": "subline2",
+          "a": {
+            "x": 400.0,
+            "y": 450.0
+          },
+          "b": {
+            "x": 400.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        },
+        {
+          "id": "subline3",
+          "a": {
+            "x": 600.0,
+            "y": 450.0
+          },
+          "b": {
+            "x": 600.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        },
+        {
+          "id": "subline4",
+          "a": {
+            "x": 600.0,
+            "y": 500.0
+          },
+          "b": {
+            "x": 600.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        },
+        {
+          "id": "subline5",
+          "a": {
+            "x": 750.0,
+            "y": 450.0
+          },
+          "b": {
+            "x": 750.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "cube_bay",
+          "type": "object_reaches_region",
+          "object_id": "cube",
+          "region": {
+            "shape": "rectangle",
+            "x": 250.0,
+            "y": 540.0,
+            "width": 150.0,
+            "height": 40.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.1,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 100.0,
+          "x_max": 760.0,
+          "y_min": 120.0,
+          "y_max": 550.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 11,
+      "title": "Drop the ball below the shelf",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 480.0,
+        "damping": 0.99,
+        "iterations": 35,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 420.0,
+          "y": 180.0,
+          "radius": 24.0,
+          "mass": 2.0,
+          "friction": 0.9,
+          "elasticity": 0.1,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            220,
+            90,
+            90
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_floor",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "shelf_left",
+          "a": {
+            "x": 20.0,
+            "y": 400.0
+          },
+          "b": {
+            "x": 450.0,
+            "y": 400.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        },
+        {
+          "id": "shelf_right",
+          "a": {
+            "x": 400.0,
+            "y": 500.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 500.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.1
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "fall_below",
+          "type": "object_below_height",
+          "object_id": "ball",
+          "y": 550.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.15,
+        "stroke_body": "dynamic",
+        "draw_region": {
+          "x_min": 220.0,
+          "x_max": 620.0,
+          "y_min": 120.0,
+          "y_max": 420.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 12,
+      "title": "Keep the ball on the upper bridge",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.99,
+        "iterations": 35,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 450.0,
+          "y": 180.0,
+          "radius": 22.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.15,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            130,
+            150,
+            130
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_post",
+          "a": {
+            "x": 250.0,
+            "y": 400.0
+          },
+          "b": {
+            "x": 250.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_post",
+          "a": {
+            "x": 650.0,
+            "y": 400.0
+          },
+          "b": {
+            "x": 650.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "stay_up",
+          "type": "object_stays_above_y",
+          "object_id": "ball",
+          "min_y": 470.0,
+          "duration_steps": 240
+        },
+        {
+          "id": "settle",
+          "type": "object_velocity_below",
+          "object_id": "ball",
+          "max_speed": 90.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.1,
+        "stroke_body": "dynamic",
+        "draw_region": {
+          "x_min": 220.0,
+          "x_max": 680.0,
+          "y_min": 220.0,
+          "y_max": 470.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 13,
+      "title": "Touch the ceiling zone",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 420.0,
+        "damping": 0.985,
+        "iterations": 35,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 150.0,
+          "y": 80.0,
+          "radius": 23.0,
+          "mass": 1.7,
+          "friction": 0.8,
+          "elasticity": 0.35,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 30.0,
+          "color": [
+            220,
+            80,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "ceiling_touch",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "rectangle",
+            "x": 540.0,
+            "y": 30.0,
+            "width": 180.0,
+            "height": 60.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 8.0,
+        "friction": 0.9,
+        "elasticity": 0.35,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 20.0,
+          "x_max": 880.0,
+          "y_min": 20.0,
+          "y_max": 580.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 14,
+      "title": "Make the red ball touch the green ball",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.985,
+        "iterations": 30,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 720.0,
+          "y": 150.0,
+          "radius": 22.0,
+          "mass": 1.5,
+          "friction": 0.9,
+          "elasticity": 0.15,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            220,
+            90,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_cup_wall",
+          "a": {
+            "x": 145.0,
+            "y": 400.0
+          },
+          "b": {
+            "x": 145.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_cup_wall",
+          "a": {
+            "x": 250.0,
+            "y": 400.0
+          },
+          "b": {
+            "x": 250.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "left_cup",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "circle",
+            "x": 200.0,
+            "y": 535.0,
+            "r": 38.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.15,
+        "stroke_body": "dynamic",
+        "draw_region": {
+          "x_min": 120.0,
+          "x_max": 810.0,
+          "y_min": 100.0,
+          "y_max": 560.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 15,
+      "title": "Settle the cube inside the center box",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "cube",
+          "type": "box",
+          "dynamic": true,
+          "x": 150.0,
+          "y": 130.0,
+          "width": 42.0,
+          "height": 42.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.1,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            90,
+            130,
+            220
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "center_left_wall",
+          "a": {
+            "x": 570.0,
+            "y": 500.0
+          },
+          "b": {
+            "x": 570.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "center_right_wall",
+          "a": {
+            "x": 710.0,
+            "y": 500.0
+          },
+          "b": {
+            "x": 710.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "center_box",
+          "type": "object_stays_in_region",
+          "object_id": "cube",
+          "duration_steps": 90,
+          "region": {
+            "shape": "rectangle",
+            "x": 585.0,
+            "y": 500.0,
+            "width": 110.0,
+            "height": 80.0
+          }
+        },
+        {
+          "id": "slow_cube",
+          "type": "object_velocity_below",
+          "object_id": "cube",
+          "max_speed": 55.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 3,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.1,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 80.0,
+          "x_max": 760.0,
+          "y_min": 90.0,
+          "y_max": 560.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 16,
+      "title": "Lift the ball above the white zone",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 420.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 200.0,
+          "y": 300.0,
+          "radius": 24.0,
+          "mass": 2.0,
+          "friction": 0.8,
+          "elasticity": 0.35,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 40.0,
+          "color": [
+            220,
+            90,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "above_marker",
+          "type": "object_above_height",
+          "object_id": "ball",
+          "y": 200.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 3,
+        "segment_thickness": 8.0,
+        "friction": 0.8,
+        "elasticity": 0.4,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 120.0,
+          "x_max": 780.0,
+          "y_min": 220.0,
+          "y_max": 560.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 17,
+      "title": "Reach the green zone",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.985,
+        "iterations": 35,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 120.0,
+          "y": 200.0,
+          "radius": 20.0,
+          "mass": 1.4,
+          "friction": 0.8,
+          "elasticity": 0.2,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            220,
+            90,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "gate_top",
+          "a": {
+            "x": 520.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 520.0,
+            "y": 480.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "gate_bottom",
+          "a": {
+            "x": 520.0,
+            "y": 545.0
+          },
+          "b": {
+            "x": 520.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "after_gate",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "rectangle",
+            "x": 700.0,
+            "y": 490.0,
+            "width": 110.0,
+            "height": 70.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.2,
+        "stroke_body": "dynamic",
+        "draw_region": {
+          "x_min": 80.0,
+          "x_max": 700.0,
+          "y_min": 250.0,
+          "y_max": 560.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 18,
+      "title": "Keep the cube off the floor",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 500.0,
+        "damping": 0.99,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "cube",
+          "type": "box",
+          "dynamic": true,
+          "x": 450.0,
+          "y": 240.0,
+          "width": 46.0,
+          "height": 46.0,
+          "mass": 2.0,
+          "friction": 0.9,
+          "elasticity": 0.1,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            90,
+            130,
+            220
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "cube_stays_high",
+          "type": "object_stays_above_y",
+          "object_id": "cube",
+          "min_y": 560.0,
+          "duration_steps": 260
+        },
+        {
+          "id": "cube_slow",
+          "type": "object_velocity_below",
+          "object_id": "cube",
+          "max_speed": 100.0
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.1,
+        "stroke_body": "dynamic",
+        "draw_region": {
+          "x_min": 250.0,
+          "x_max": 650.0,
+          "y_min": 220.0,
+          "y_max": 540.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 19,
+      "title": "Touch any of the green ball",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.985,
+        "iterations": 35,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 450.0,
+          "y": 140.0,
+          "radius": 22.0,
+          "mass": 1.5,
+          "friction": 0.9,
+          "elasticity": 0.15,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 0.0,
+          "color": [
+            220,
+            90,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "left_basket_wall",
+          "a": {
+            "x": 150.0,
+            "y": 410.0
+          },
+          "b": {
+            "x": 150.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_basket_wall",
+          "a": {
+            "x": 750.0,
+            "y": 410.0
+          },
+          "b": {
+            "x": 750.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "any",
+      "goals": [
+        {
+          "id": "left_basket",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "circle",
+            "x": 70.0,
+            "y": 530.0,
+            "r": 35.0
+          }
+        },
+        {
+          "id": "right_basket",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "circle",
+            "x": 830.0,
+            "y": 530.0,
+            "r": 35.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 2,
+        "segment_thickness": 7.0,
+        "friction": 1.0,
+        "elasticity": 0.15,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 120.0,
+          "x_max": 780.0,
+          "y_min": 120.0,
+          "y_max": 560.0
+        },
+        "color": [
+          170,
+          160,
+          40
+        ]
+      }
+    },
+    {
+      "level_id": 20,
+      "title": "Make the red ball touch the green ball",
+      "canvas": {
+        "width": 900,
+        "height": 620
+      },
+      "physics": {
+        "gravity": 450.0,
+        "damping": 0.985,
+        "iterations": 40,
+        "substeps": 4
+      },
+      "objects": [
+        {
+          "id": "ball",
+          "type": "circle",
+          "dynamic": true,
+          "x": 120.0,
+          "y": 400.0,
+          "radius": 22.0,
+          "mass": 1.8,
+          "friction": 0.8,
+          "elasticity": 0.25,
+          "velocity": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "angular_velocity": 60.0,
+          "color": [
+            220,
+            90,
+            80
+          ]
+        }
+      ],
+      "static_segments": [
+        {
+          "id": "floor",
+          "a": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "ceiling",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.25
+        },
+        {
+          "id": "left_wall",
+          "a": {
+            "x": 20.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 20.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "right_wall",
+          "a": {
+            "x": 880.0,
+            "y": 20.0
+          },
+          "b": {
+            "x": 880.0,
+            "y": 580.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        },
+        {
+          "id": "mid_platform",
+          "a": {
+            "x": 500.0,
+            "y": 360.0
+          },
+          "b": {
+            "x": 760.0,
+            "y": 360.0
+          },
+          "thickness": 8.0,
+          "friction": 1.0,
+          "elasticity": 0.2
+        }
+      ],
+      "goal_logic": "all",
+      "goals": [
+        {
+          "id": "high_target",
+          "type": "object_reaches_region",
+          "object_id": "ball",
+          "region": {
+            "shape": "circle",
+            "x": 735.0,
+            "y": 300.0,
+            "r": 36.0
+          }
+        }
+      ],
+      "draw_rules": {
+        "max_segments": 3,
+        "segment_thickness": 8.0,
+        "friction": 1.0,
+        "elasticity": 0.25,
+        "stroke_body": "static",
+        "draw_region": {
+          "x_min": 80.0,
+          "x_max": 780.0,
+          "y_min": 140.0,
+          "y_max": 560.0
         },
         "color": [
           170,
