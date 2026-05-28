@@ -101,15 +101,19 @@ def run_human_mode(env):
 
                 elif event.key == pygame.K_r:
                     obs, info = env.reset()
+                    done = False
 
                 elif event.key == pygame.K_c:
                     env.clear_drawn_segments()
+                    done = False
 
                 elif event.key == pygame.K_p:
                     env.previous_level()
+                    done = False
 
                 elif event.key == pygame.K_n:
                     env.next_level()
+                    done = False
 
                 elif event.key == pygame.K_SPACE:
                     simulate = not simulate
@@ -133,6 +137,7 @@ def run_human_mode(env):
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1 and env.current_stroke_points:
                     env._apply_stroke_points(env.current_stroke_points)
+                    done = False
                     env.current_stroke_points = []
                     env.preview_stroke_points = []
 

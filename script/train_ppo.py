@@ -1,120 +1,144 @@
+import argparse
 import os
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.append(str(ROOT))
-
 from stable_baselines3 import PPO
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.env_checker import check_env
+from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.append(str(ROOT))
 
 from env.brainiton_env_v2 import BrainItOnGeneralEnv
 
 
-MODEL_DIR = "models"
-LOG_DIR = "logs"
+DEFAULT_TRAIN_LEVELS = [1, 2, 5, 7, 8, 9, 10, 11, 12, 14, 16, 17]
+DEFAULT_EVAL_LEVELS = [3, 4, 6, 13, 15, 18, 19, 20]
 
-os.makedirs(MODEL_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
+
+def parse_level_ids(value):
+    if value is None or value.strip() == "":
+        return None
+    return [int(item.strip()) for item in value.split(",") if item.strip()]
 
 
 def make_env(
+    *,
     level_path,
-    level_id=1,
-    train_level_ids=None,
-    reward_mode="dense",
-    stroke_body="static",
-    max_steps=500,
-    agent_draw_mode="stroke",
-    num_stroke_points=2,
+    start_level_id,
+    train_level_ids,
+    reward_mode,
+
+    max_steps,
+    agent_draw_mode,
+    num_stroke_points,
 ):
     def _init():
         env = BrainItOnGeneralEnv(
             level_path=level_path,
-            level_id=level_id,
+            level_id=start_level_id,
             train_level_ids=train_level_ids,
             render_mode=None,
             reward_mode=reward_mode,
             control_mode="agent",
             max_steps=max_steps,
-            stroke_body=stroke_body,
             agent_draw_mode=agent_draw_mode,
             num_stroke_points=num_stroke_points,
         )
-        return Monitor(env,info_keywords=("is_success", "is_failure"))
+        return Monitor(env, info_keywords=("is_success", "is_failure", "level_id"))
 
     return _init
 
 
-def train():
-    level_path = "levels/level.json"
-    train_level_ids = [1, 2, 5, 7, 8]
-    eval_level_ids = [3, 4, 6]
-    level_id = train_level_ids[0]
-    reward_mode = "dense"
-    stroke_body = "static"
-    max_steps = 500
-    model_name = f"ppo_multilevel_{reward_mode}_{stroke_body}"
+def build_arg_parser():
+    parser = argparse.ArgumentParser(description="Train PPO on BrainItOnGeneralEnv.")
+    parser.add_argument("--level-path", default=str(ROOT / "levels" / "level.json"))
+    parser.add_argument("--train-levels", default=",".join(map(str, DEFAULT_TRAIN_LEVELS)))
+    parser.add_argument("--eval-levels", default=",".join(map(str, DEFAULT_EVAL_LEVELS)))
+    parser.add_argument("--reward-mode", choices=["dense", "sparse"], default="dense")
+    parser.add_argument("--max-steps", type=int, default=500)
+    parser.add_argument("--agent-draw-mode", choices=["stroke", "line"], default="stroke")
+    parser.add_argument("--num-stroke-points", type=int, default=2)
+    parser.add_argument("--n-envs", type=int, default=4)
+    parser.add_argument("--total-timesteps", type=int, default=300_000)
+    parser.add_argument("--eval-freq", type=int, default=10_000)
+    parser.add_argument("--n-eval-episodes", type=int, default=16)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--skip-env-check", action="store_true")
+    parser.add_argument("--model-name", default=None)
+    return parser
 
-    agent_draw_mode = "stroke"
-    num_stroke_points = 2
-    n_envs = 4
-    total_timesteps = 300_000
 
-    check_env(
-        BrainItOnGeneralEnv(
-            level_path=level_path,
-            level_id=level_id,
-            train_level_ids=train_level_ids,
-            render_mode=None,
-            reward_mode=reward_mode,
-            control_mode="agent",
-            max_steps=max_steps,
-            stroke_body=stroke_body,
-            agent_draw_mode=agent_draw_mode,
-            num_stroke_points=num_stroke_points,
-        ),
-        warn=True,
+def train(args):
+    train_level_ids = parse_level_ids(args.train_levels) or DEFAULT_TRAIN_LEVELS
+    eval_level_ids = parse_level_ids(args.eval_levels) or train_level_ids
+
+    model_name = args.model_name or (
+        f"ppo_multilevel_{args.reward_mode}"
+        f"_{args.agent_draw_mode}_{args.num_stroke_points}pt"
     )
 
-    train_env = DummyVecEnv([
-        make_env(
-            level_path=level_path,
-            level_id=level_id,
-            train_level_ids=train_level_ids,
-            reward_mode=reward_mode,
-            stroke_body=stroke_body,
-            max_steps=max_steps,
-            agent_draw_mode=agent_draw_mode,
-            num_stroke_points=num_stroke_points,
+    model_dir = ROOT / "models" / model_name
+    log_dir = ROOT / "logs" / model_name
+    os.makedirs(model_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
+
+    if not args.skip_env_check:
+        check_env(
+            BrainItOnGeneralEnv(
+                level_path=args.level_path,
+                level_id=train_level_ids[0],
+                train_level_ids=train_level_ids,
+                render_mode=None,
+                reward_mode=args.reward_mode,
+                control_mode="agent",
+                max_steps=args.max_steps,
+                agent_draw_mode=args.agent_draw_mode,
+                num_stroke_points=args.num_stroke_points,
+            ),
+            warn=True,
         )
-        for _ in range(n_envs)
-    ])
+
+    train_env = DummyVecEnv(
+        [
+            make_env(
+                level_path=args.level_path,
+                start_level_id=train_level_ids[0],
+                train_level_ids=train_level_ids,
+                reward_mode=args.reward_mode,
+                max_steps=args.max_steps,
+                agent_draw_mode=args.agent_draw_mode,
+                num_stroke_points=args.num_stroke_points,
+            )
+            for _ in range(args.n_envs)
+        ]
+    )
     train_env = VecMonitor(train_env)
 
-    eval_env = DummyVecEnv([
-        make_env(
-            level_path=level_path,
-            level_id=eval_level_ids[0],
-            train_level_ids=eval_level_ids,
-            reward_mode=reward_mode,
-            stroke_body=stroke_body,
-            max_steps=max_steps,
-            agent_draw_mode=agent_draw_mode,
-            num_stroke_points=num_stroke_points,
-        )
-    ])
+    eval_env = DummyVecEnv(
+        [
+            make_env(
+                level_path=args.level_path,
+                start_level_id=eval_level_ids[0],
+                train_level_ids=eval_level_ids,
+                reward_mode=args.reward_mode,
+                max_steps=args.max_steps,
+                agent_draw_mode=args.agent_draw_mode,
+                num_stroke_points=args.num_stroke_points,
+            )
+        ]
+    )
     eval_env = VecMonitor(eval_env)
 
     eval_callback = EvalCallback(
         eval_env,
-        best_model_save_path=MODEL_DIR,
-        log_path=LOG_DIR,
-        eval_freq=max(10_000 // n_envs, 1),
-        n_eval_episodes=10,
+        best_model_save_path=str(model_dir),
+        log_path=str(log_dir),
+        eval_freq=max(args.eval_freq // args.n_envs, 1),
+        n_eval_episodes=args.n_eval_episodes,
         deterministic=True,
         render=False,
     )
@@ -133,25 +157,31 @@ def train():
         vf_coef=0.5,
         max_grad_norm=0.5,
         verbose=1,
-        tensorboard_log=LOG_DIR,
+        tensorboard_log=str(log_dir),
+        seed=args.seed,
         device="auto",
     )
 
+    print(f"Training levels: {train_level_ids}")
+    print(f"Evaluation levels: {eval_level_ids}")
+    print(f"Saving only best and final models in: {model_dir}")
+
     model.learn(
-        total_timesteps=total_timesteps,
+        total_timesteps=args.total_timesteps,
         callback=eval_callback,
         progress_bar=True,
-        tb_log_name=model_name,
+        tb_log_name="tb",
     )
 
-    final_model_path = f"{MODEL_DIR}/{model_name}_final"
-    model.save(final_model_path)
+    final_model_path = model_dir / "final_model"
+    model.save(str(final_model_path))
 
     train_env.close()
     eval_env.close()
 
-    print(f"Model saved at: {final_model_path}")
+    print(f"Best model: {model_dir / 'best_model.zip'}")
+    print(f"Final model: {final_model_path}.zip")
 
 
 if __name__ == "__main__":
-    train()
+    train(build_arg_parser().parse_args())
